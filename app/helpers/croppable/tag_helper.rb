@@ -4,7 +4,11 @@ module Croppable
       width  = options["width"]  || object.send("#{ method }_croppable_setup")[:width]
       height = options["height"] || object.send("#{ method }_croppable_setup")[:height]
 
-      render "croppable/tag", width: width, height: height, method: method, name: name
+      original = object.send(:"#{ method }_original")
+      data     = object.send(:"#{ method }_croppable_data")
+
+      render "croppable/tag", width: width, height: height, method: method, name: name,
+        original: original, data: data
     end
   end
 end

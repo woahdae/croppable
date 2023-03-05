@@ -1,23 +1,27 @@
-<div class="croppable-wrapper">
+<%= content_tag :div, class: "croppable-wrapper", data: { width: width, height: height } do %>
   <%= fields_for :croppables do |croppables| %>
     <%= croppables.fields_for method do |croppable| %>
       <%= croppable.hidden_field :base, value: name %>
       <%= croppable.file_field :image, class: "croppable-input",
-        data: { width: width, height: height },
         accept: ActiveStorage.web_image_content_types.join(",") %>
       <div class="croppable-preview">
-        <div class="croppable-container"></div>
+        <div class="croppable-container">
+          <% if original.present? %>
+            <%= image_tag original, width: width, height: height, class: "croppable-image" %>
+          <% end %>
+        </div>
         <div class="croppable-controls">
-          <%= croppable.fields_for :data do |data| %>
+          <%= croppable.fields_for :data, model: data do |data| %>
             <%= data.hidden_field :x, class: "croppable-x" %>
             <%= data.hidden_field :y, class: "croppable-y" %>
             <%= data.hidden_field :scale, class: "croppable-scale" %>
             <%= data.color_field :background_color, class: "croppable-bgcolor" %>
           <% end %>
-          <button class="croppable-center">center</button>
-          <button class="croppable-fit">fit</button>
+          <button class="croppable-center"></button>
+          <button class="croppable-fit"></button>
+          <button class="croppable-delete"></button>
         </div>
       </div>
     <% end %>
   <% end %>
-</div>
+<% end %>

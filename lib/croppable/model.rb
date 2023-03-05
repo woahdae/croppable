@@ -14,6 +14,12 @@ module Croppable
           crop_image(name)
         end
 
+        after_initialize do
+          unless self.send(:"#{ name }_croppable_data")
+            self.send(:"#{ name }_croppable_data=", Croppable::Datum.new(name: "#{ name }"))
+          end
+        end
+
         generated_association_methods.class_eval <<-CODE, __FILE__, __LINE__ + 1
           def #{ name }_croppable_setup
             {width: #{ width }, height: #{ height }}
@@ -24,9 +30,9 @@ module Croppable
           end
 
           def #{ name }=(croppable_param)
-            self.#{ name }_original = croppable_param.image
+            self.#{ name }_original = croppable_param.image if croppable_param.image
             self.#{ name }_croppable_data ||= Croppable::Datum.new(name: "#{ name }")
-            self.#{ name }_croppable_data.assign_attributes(croppable_param.data)
+            self.#{ name }_croppable_data.update(croppable_param.data)
             @to_crop = true
           end
         CODE
