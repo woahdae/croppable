@@ -1,0 +1,10 @@
+.croppable-preview {
+  display:       flex;
+  margin-bottom: 1em;
+}
+
+.croppable-controls {
+  display: none;
+  flex-direction: column;
+  padding: 0 1em;
+}
