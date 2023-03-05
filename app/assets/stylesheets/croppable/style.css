@@ -7,7 +7,6 @@
   display: none;
   flex-direction: column;
   padding: 0 0.7em;
-  width: 90px;
 }
 
 .croppable-controls button {
