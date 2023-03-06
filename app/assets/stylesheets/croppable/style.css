@@ -9,6 +9,10 @@
   padding: 0 0.7em;
 }
 
+.croppable-input-delete {
+  display: none;
+}
+
 .croppable-controls button {
   background-position: center;
   background-repeat: no-repeat;

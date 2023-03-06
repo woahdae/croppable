@@ -20,30 +20,30 @@ function setupCropperFromInput(event) {
 
   image.src = URL.createObjectURL(file);
 
-  updateImageDisplay(image, wrapper, true)
+  updateImageDisplay(image, wrapper, true, input)
 }
 
 function setupCropperFromImage(image) {
   const wrapper = image.closest(".croppable-wrapper");
 
-  updateImageDisplay(image, wrapper, false)
+  updateImageDisplay(image, wrapper, false, false)
 }
 
-function updateImageDisplay(image, wrapper, isNewImage) {
-  const controls   = wrapper.querySelector(".croppable-controls");
-  const container  = wrapper.querySelector(".croppable-container");
-  const centerBtn  = wrapper.querySelector(".croppable-center");
-  const fitBtn     = wrapper.querySelector(".croppable-fit");
-  const bgColorBtn = wrapper.querySelector(".croppable-bgcolor");
-  const xInput     = wrapper.querySelector(".croppable-x");
-  const yInput     = wrapper.querySelector(".croppable-y");
-  const scaleInput = wrapper.querySelector(".croppable-scale");
-  const width      = wrapper.dataset.width;
-  const height     = wrapper.dataset.height;
+function updateImageDisplay(image, wrapper, isNewImage, input) {
+  const controls    = wrapper.querySelector(".croppable-controls");
+  const container   = wrapper.querySelector(".croppable-container");
+  const centerBtn   = wrapper.querySelector(".croppable-center");
+  const fitBtn      = wrapper.querySelector(".croppable-fit");
+  const deleteBtn   = wrapper.querySelector(".croppable-delete");
+  const bgColorBtn  = wrapper.querySelector(".croppable-bgcolor");
+  const xInput      = wrapper.querySelector(".croppable-x");
+  const yInput      = wrapper.querySelector(".croppable-y");
+  const scaleInput  = wrapper.querySelector(".croppable-scale");
+  const deleteInput = wrapper.querySelector(".croppable-input-delete");
+  const width       = wrapper.dataset.width;
+  const height      = wrapper.dataset.height;
 
-  while(container.firstChild) {
-    container.removeChild(container.lastChild);
-  }
+  cleanContainer()
 
   const cropper = new Cropper(image, {container, template: template(width, height)});
 
@@ -87,7 +87,6 @@ function updateImageDisplay(image, wrapper, isNewImage) {
     cropperCanvas.style.backgroundColor = event.target.value;
   })
 
-
   centerBtn.addEventListener("click", (event) => {
     event.preventDefault();
     cropperImage.$center('cover')
@@ -97,6 +96,26 @@ function updateImageDisplay(image, wrapper, isNewImage) {
     event.preventDefault();
     cropperImage.$center('contain')
   })
+
+  deleteBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    deleteInput.checked = true;
+
+    if (input) {
+      input.value = "";
+    }
+
+    cleanContainer()
+
+    controls.style.display = "none";
+  })
+
+  function cleanContainer() {
+    while(container.firstChild) {
+      container.removeChild(container.lastChild);
+    }
+  }
 }
 
 function template(width, height) {

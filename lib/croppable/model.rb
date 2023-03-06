@@ -10,8 +10,8 @@ module Croppable
         has_one :"#{ name }_croppable_data", -> { where(name: name) },
           as: :croppable, inverse_of: :croppable, dependent: :destroy, class_name: "Croppable::Datum"
 
-        after_commit if: -> { @to_crop } do
-          crop_image(name)
+        after_commit if: -> { to_crop_croppable[name] } do
+          Croppable::CropImageJob.perform_later(self, name)
         end
 
         after_initialize do
@@ -25,24 +25,28 @@ module Croppable
             {width: #{ width }, height: #{ height }}
           end
 
+          def to_crop_croppable
+            @to_crop_croppable ||= Hash.new
+          end
+
           def #{ name }
             self.#{ name }_cropped
           end
 
           def #{ name }=(croppable_param)
-            self.#{ name }_original = croppable_param.image if croppable_param.image
-            self.#{ name }_croppable_data ||= Croppable::Datum.new(name: "#{ name }")
-            self.#{ name }_croppable_data.update(croppable_param.data)
-            @to_crop = true
+            if croppable_param.delete
+              self.#{ name }_original = nil
+              self.#{ name }_cropped  = nil
+            else
+              self.#{ name }_original = croppable_param.image if croppable_param.image
+              self.#{ name }_croppable_data ||= Croppable::Datum.new(name: "#{ name }")
+              self.#{ name }_croppable_data.update(croppable_param.data)
+
+              to_crop_croppable[:#{ name }] = self.#{ name }_croppable_data.updated_at_previously_changed?
+            end
           end
         CODE
       end
-    end
-
-    private
-
-    def crop_image(name)
-      Croppable::CropImageJob.perform_later(self, name)
     end
   end
 end
