@@ -1,7 +1,18 @@
 import Cropper from 'cropperjs';
 
-document.addEventListener('DOMContentLoaded', start)
-document.addEventListener('turbo:render', start)
+function isTurbolinksEnabled() {
+  try {
+    return Turbolinks.supported;
+  } catch(_) {
+    return false;
+  }
+}
+
+if(isTurbolinksEnabled) {
+  document.addEventListener('turbo:load', start)
+} else {
+  document.addEventListener('DOMContentLoaded', start)
+}
 
 function start() {
   const input = document.querySelector('.croppable-input');
@@ -61,11 +72,20 @@ function updateImageDisplay(image, wrapper, isNewImage, input) {
 
   cropperImage.$ready(() => {
     if (xInput.value != "" && !isNewImage) {
+      var waitForTranform = null;
+
+      // Turbolinks hack to actually apply initial transformation
+      if(isTurbolinksEnabled) {
+        waitForTranform = 10;
+      } else {
+        waitForTranform = 0;
+      }
+
       setTimeout(() => {
         cropperImage.$setTransform(+scaleInput.value, 0, 0, +scaleInput.value, +xInput.value, +yInput.value);
 
         saveTransform = true;
-      })
+      }, waitForTranform)
     } else {
       const matrix     = cropperImage.$getTransform();
       xInput.value     = matrix[4];

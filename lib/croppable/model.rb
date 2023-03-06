@@ -14,12 +14,6 @@ module Croppable
           Croppable::CropImageJob.perform_later(self, name)
         end
 
-        after_initialize do
-          unless self.send(:"#{ name }_croppable_data")
-            self.send(:"#{ name }_croppable_data=", Croppable::Datum.new(name: "#{ name }"))
-          end
-        end
-
         generated_association_methods.class_eval <<-CODE, __FILE__, __LINE__ + 1
           def #{ name }_croppable_setup
             {width: #{ width }, height: #{ height }}
@@ -35,14 +29,20 @@ module Croppable
 
           def #{ name }=(croppable_param)
             if croppable_param.delete
-              self.#{ name }_original = nil
-              self.#{ name }_cropped  = nil
+              self.#{ name }_original       = nil
+              self.#{ name }_cropped        = nil
+              self.#{ name }_croppable_data = nil
             else
               self.#{ name }_original = croppable_param.image if croppable_param.image
-              self.#{ name }_croppable_data ||= Croppable::Datum.new(name: "#{ name }")
-              self.#{ name }_croppable_data.update(croppable_param.data)
 
-              to_crop_croppable[:#{ name }] = self.#{ name }_croppable_data.updated_at_previously_changed?
+              if self.#{ name }_croppable_data
+                self.#{ name }_croppable_data.update(croppable_param.data)
+              else
+                self.#{ name }_croppable_data = Croppable::Datum.new(name: "#{ name }")
+                self.#{ name }_croppable_data.assign_attributes(croppable_param.data)
+              end
+
+              to_crop_croppable[:#{ name }] = self.#{ name }_croppable_data.updated_at_previously_changed? || self.#{ name }_croppable_data.new_record?
             end
           end
         CODE

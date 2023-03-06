@@ -12,11 +12,11 @@
           <% end %>
         </div>
         <div class="croppable-controls">
-          <%= croppable.fields_for :data, model: data do |data| %>
-            <%= data.hidden_field :x, class: "croppable-x" %>
-            <%= data.hidden_field :y, class: "croppable-y" %>
-            <%= data.hidden_field :scale, class: "croppable-scale" %>
-            <%= data.color_field :background_color, class: "croppable-bgcolor" %>
+          <%= croppable.fields_for :data, model: data do |data_form| %>
+            <%= data_form.hidden_field :x, class: "croppable-x" %>
+            <%= data_form.hidden_field :y, class: "croppable-y" %>
+            <%= data_form.hidden_field :scale, class: "croppable-scale" %>
+            <%= data_form.color_field :background_color, class: "croppable-bgcolor", value: data&.background_color || "#FFFFFF" %>
           <% end %>
           <button class="croppable-center"></button>
           <button class="croppable-fit"></button>
