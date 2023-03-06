@@ -15,16 +15,16 @@ if(isTurbolinksEnabled) {
 }
 
 function start() {
-  const input = document.querySelector('.croppable-input');
-  const image = document.querySelector('.croppable-image');
+  const inputs = document.getElementsByClassName('croppable-input');
+  const images = document.getElementsByClassName('croppable-image');
 
-  if (input) {
+  for (const input of inputs) {
     input.addEventListener('change', setupCropperFromInput);
   }
 
-  if (image) {
+  Array.from(images).forEach((image) => {
     setupCropperFromImage(image)
-  }
+  });
 }
 
 function setupCropperFromInput(event) {
