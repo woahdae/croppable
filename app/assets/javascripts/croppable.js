@@ -1,14 +1,19 @@
 import Cropper from 'cropperjs';
 
-const input = document.querySelector('.croppable-input');
-const image = document.querySelector('.croppable-image');
+document.addEventListener('DOMContentLoaded', start)
+document.addEventListener('turbo:render', start)
 
-if (input) {
-  input.addEventListener('change', setupCropperFromInput);
-}
+function start() {
+  const input = document.querySelector('.croppable-input');
+  const image = document.querySelector('.croppable-image');
 
-if (image) {
-  setupCropperFromImage(image)
+  if (input) {
+    input.addEventListener('change', setupCropperFromInput);
+  }
+
+  if (image) {
+    setupCropperFromImage(image)
+  }
 }
 
 function setupCropperFromInput(event) {
