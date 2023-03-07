@@ -1,4 +1,4 @@
-# desc "Explaining what the task does"
-# task :croppable do
-#   # Task goes here
-# end
+desc "Setup croppable"
+task "croppable:install" do
+  Rails::Command.invoke :generate, ["croppable:install"]
+end

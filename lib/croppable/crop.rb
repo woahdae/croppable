@@ -1,4 +1,5 @@
 require 'open-uri'
+require 'vips'
 
 module Croppable
   class Crop
