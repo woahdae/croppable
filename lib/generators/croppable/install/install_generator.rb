@@ -50,6 +50,10 @@ module Croppable
         end
       end
 
+      def install_active_storage
+        rails_command "active_storage:install", inline: true
+      end
+
       def create_migrations
         rails_command "croppable:install:migrations", inline: true
       end
