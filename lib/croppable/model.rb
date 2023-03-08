@@ -35,11 +35,12 @@ module Croppable
             else
               self.#{ name }_original = croppable_param.image if croppable_param.image
 
-              if self.#{ name }_croppable_data
-                self.#{ name }_croppable_data.update(croppable_param.data)
-              else
-                self.#{ name }_croppable_data = Croppable::Datum.new(name: "#{ name }")
-                self.#{ name }_croppable_data.assign_attributes(croppable_param.data)
+              if self.#{ name }_original.present?
+                if self.#{ name }_croppable_data
+                  self.#{ name }_croppable_data.update(croppable_param.data)
+                else
+                  self.#{ name }_croppable_data = Croppable::Datum.new(croppable_param.data.merge(name: "#{ name }"))
+                end
               end
 
               to_crop_croppable[:#{ name }] = self.#{ name }_croppable_data.updated_at_previously_changed? || self.#{ name }_croppable_data.new_record?

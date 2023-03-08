@@ -1,4 +1,7 @@
 <%= content_tag :div, class: "croppable-wrapper", data: { width: width, height: height } do %>
+  <div class="croppable-droparea" style="width: <%= width %>px; height: <%= height %>px;">
+    <%= render 'croppable/uploader' %>
+  </div>
   <%= fields_for :croppables do |croppables| %>
     <%= croppables.fields_for method do |croppable| %>
       <%= croppable.hidden_field :base, value: name %>

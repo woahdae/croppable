@@ -15,34 +15,57 @@ if(isTurbolinksEnabled) {
 }
 
 function start() {
-  const inputs = document.getElementsByClassName('croppable-input');
+  const dropAreas  = document.getElementsByClassName('croppable-droparea');
+
+  Array.from(dropAreas).forEach((dropArea) => {
+    const wrapper = dropArea.closest(".croppable-wrapper");
+    const input   = wrapper.querySelector(".croppable-input");
+
+    input.addEventListener('change', (event) => {
+      const file  = input.files[0];
+
+      const image = document.createElement('img');
+      image.src = URL.createObjectURL(file);
+
+      updateImageDisplay(image, wrapper, true, input)
+    });
+
+    dropArea.onclick = () => input.click()
+
+    dropArea.addEventListener("dragover", (event)=>{
+      event.preventDefault();
+      dropArea.classList.add("active");
+    });
+
+    dropArea.addEventListener("dragleave", ()=>{
+      dropArea.classList.remove("active");
+    });
+
+    dropArea.addEventListener("drop", (event)=>{
+      event.preventDefault();
+
+      const file  = event.dataTransfer.files[0];
+
+      if (file.type.match(/image.*/)) {
+        input.files = event.dataTransfer.files;
+
+        const image = document.createElement('img');
+        image.src = URL.createObjectURL(file);
+
+        updateImageDisplay(image, wrapper, true, input)
+      }
+
+      dropArea.classList.remove("active");
+    });
+  });
+
   const images = document.getElementsByClassName('croppable-image');
 
-  for (const input of inputs) {
-    input.addEventListener('change', setupCropperFromInput);
-  }
-
   Array.from(images).forEach((image) => {
-    setupCropperFromImage(image)
+    const wrapper = image.closest(".croppable-wrapper");
+
+    updateImageDisplay(image, wrapper, false, false)
   });
-}
-
-function setupCropperFromInput(event) {
-  const input      = event.target;
-  const wrapper    = input.closest(".croppable-wrapper");
-
-  const file  = input.files[0];
-  const image = document.createElement('img');
-
-  image.src = URL.createObjectURL(file);
-
-  updateImageDisplay(image, wrapper, true, input)
-}
-
-function setupCropperFromImage(image) {
-  const wrapper = image.closest(".croppable-wrapper");
-
-  updateImageDisplay(image, wrapper, false, false)
 }
 
 function updateImageDisplay(image, wrapper, isNewImage, input) {
@@ -56,8 +79,12 @@ function updateImageDisplay(image, wrapper, isNewImage, input) {
   const yInput      = wrapper.querySelector(".croppable-y");
   const scaleInput  = wrapper.querySelector(".croppable-scale");
   const deleteInput = wrapper.querySelector(".croppable-input-delete");
+  const dropArea    = wrapper.querySelector(".croppable-droparea");
   const width       = wrapper.dataset.width;
   const height      = wrapper.dataset.height;
+
+  dropArea.classList.add("inactive");
+  container.classList.add("active");
 
   cleanContainer()
 
@@ -127,11 +154,12 @@ function updateImageDisplay(image, wrapper, isNewImage, input) {
 
     deleteInput.checked = true;
 
-    if (input) {
-      input.value = "";
-    }
+    if (input) { input.value = ""; }
 
     cleanContainer()
+
+    dropArea.classList.remove("inactive");
+    container.classList.remove("active");
 
     controls.style.display = "none";
   })

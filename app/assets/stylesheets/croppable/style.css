@@ -1,5 +1,8 @@
 .croppable-preview {
-  display:       flex;
+  display: flex;
+}
+
+.croppable-wrapper {
   margin-bottom: 1em;
 }
 
@@ -9,7 +12,7 @@
   padding: 0 0.7em;
 }
 
-.croppable-input-delete {
+.croppable-input-delete, .croppable-input {
   display: none;
 }
 
@@ -49,4 +52,20 @@
 .croppable-delete {
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA4UlEQVR4nO2aSw7CIBRFz6iLUren1W3JwLiPttvASDAhJi9tlRbS3pO8CaGfm8eZACC2SwPcgAHwI9UDbXymOq4TAnzXhQrp488dJsw9Jp2pDh9rqfmrUXUQ98O6X6rcVoLcc3Sm1Hr2ub+rIH/i1RGDXS2tJ/DIMF48iDVn7niKglioI2hpBeSIhRxBjgTkiIUcQY4E5IiFHEGOBOSIhRxBjgTkiIUcQY6Uc8QZZxhzx1O0iW2xq03sJfAKMnIZ4H3Qvxan+M0u50vbgqe555xBmhjm05k1qoshqrx4IxjhBYDU2PkqqpaWAAAAAElFTkSuQmCC');
   background-size: 23px !important;
+}
+
+.croppable-droparea {
+  background: #5256ad;
+  border-radius: 5px;
+  border: 2px dashed #fff;
+  box-sizing: content-box;
+  cursor: pointer;
+}
+
+.croppable-droparea.active, .croppable-container.active {
+  border: 2px solid #4D37AD;
+}
+
+.croppable-droparea.inactive {
+  display: none;
 }
