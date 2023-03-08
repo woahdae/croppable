@@ -85,6 +85,7 @@ function updateImageDisplay(image, wrapper, isNewImage, input) {
 
   dropArea.classList.add("inactive");
   container.classList.add("active");
+  deleteInput.checked = false;
 
   cleanContainer()
 

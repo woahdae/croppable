@@ -41,9 +41,9 @@ module Croppable
                 else
                   self.#{ name }_croppable_data = Croppable::Datum.new(croppable_param.data.merge(name: "#{ name }"))
                 end
-              end
 
-              to_crop_croppable[:#{ name }] = self.#{ name }_croppable_data.updated_at_previously_changed? || self.#{ name }_croppable_data.new_record?
+                to_crop_croppable[:#{ name }] = self.#{ name }_croppable_data.updated_at_previously_changed? || self.#{ name }_croppable_data.new_record?
+              end
             end
           end
         CODE
