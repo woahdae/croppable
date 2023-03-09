@@ -42,10 +42,10 @@ module Croppable
         destination = Pathname(destination_root)
 
         if (stylesheet = destination.join("app/assets/stylesheets/application.css")).exist?
-          insert_into_file stylesheet, %(*= require croppable/style\n), before: " *= require_self"
+          insert_into_file stylesheet, %(*= require croppable/croppable\n), before: " *= require_self"
         else
           say <<~INSTRUCTIONS, :green
-              To use the Croppable gem, you must import 'croppable/style' in your base stylesheet.
+              To use the Croppable gem, you must import 'croppable/croppable' in your base stylesheet.
           INSTRUCTIONS
         end
       end
