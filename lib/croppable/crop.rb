@@ -2,6 +2,7 @@ require 'open-uri'
 require 'vips'
 
 module Croppable
+
   class Crop
     def initialize(model, attr_name)
       @model     = model
@@ -26,8 +27,14 @@ module Croppable
       background_embed = background.dup
       background_embed << 255 if vips_img.bands == 4
 
-      vips_img = vips_img.resize(@data.scale)
-      vips_img = vips_img.embed(x, y, @setup[:width], @setup[:height], background: background_embed)
+      vips_img = vips_img.resize(@data.scale * @setup[:resolution])
+      vips_img = vips_img.embed(
+        x * @setup[:resolution],
+        y * @setup[:resolution],
+        @setup[:width] * @setup[:resolution],
+        @setup[:height] * @setup[:resolution],
+        background: background_embed
+      )
 
       path = Tempfile.new('cropped').path + ".jpg"
 

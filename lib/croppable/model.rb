@@ -2,8 +2,12 @@ module Croppable
   module Model
     extend ActiveSupport::Concern
 
+    # High-resolution displays, which are a large part of the market, need twice
+    # the pixels to look professional.
+    DEFAULT_RESOLUTION = 2
+
     class_methods do
-      def has_croppable(name, width:, height:)
+      def has_croppable(name, width:, height:, resolution: DEFAULT_RESOLUTION)
         has_one_attached :"#{ name }_cropped"
         has_one_attached :"#{ name }_original"
 
@@ -16,7 +20,7 @@ module Croppable
 
         generated_association_methods.class_eval <<-CODE, __FILE__, __LINE__ + 1
           def #{ name }_croppable_setup
-            {width: #{ width }, height: #{ height }}
+            {width: #{ width }, height: #{ height }, resolution: #{ resolution }}
           end
 
           def to_crop_croppable
