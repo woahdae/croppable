@@ -1,4 +1,5 @@
 require "croppable/model"
+require "croppable/param"
 
 module Croppable
   class Engine < ::Rails::Engine

@@ -17,7 +17,7 @@ module CleanCroppableParams
       params[:croppables].each do |(key, croppable)|
         params[croppable[:base]] ||= {}
         delete = croppable[:delete] == "1"
-        params[croppable[:base]][key] = Croppable::Param.new(croppable[:image], croppable[:data], delete)
+        params[croppable[:base]][key] = Croppable::Param.new(croppable[:image], croppable[:data], delete: delete)
       end
     end
   end
