@@ -17,6 +17,11 @@
   </div>
 
   <div>
+    <%= form.label :logo, style: "display: block" %>
+    <%= form.croppable_field :logo %>
+  </div>
+
+  <div>
     <%= form.submit %>
   </div>
 <% end %>
