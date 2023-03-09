@@ -8,7 +8,7 @@ function isTurbolinksEnabled() {
   }
 }
 
-if(isTurbolinksEnabled) {
+if(isTurbolinksEnabled()) {
   document.addEventListener('turbo:load', start)
 } else {
   document.addEventListener('DOMContentLoaded', start)

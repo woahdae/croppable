@@ -79,5 +79,13 @@ model.logo_original
 
 NOTE: Images are cropped in a background job after model gets saved so they might not be immediately available
 
+## Contributing
+
+Run all test
+```bash
+rails test
+rails app:test:system
+```
+
 ## License
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
