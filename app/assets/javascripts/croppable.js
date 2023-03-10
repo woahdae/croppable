@@ -1,9 +1,11 @@
 import Cropper from 'cropperjs';
 
-document.addEventListener('turbo:load', start)
-document.addEventListener('DOMContentLoaded', start)
+document.addEventListener('turbo:load', start);
+document.addEventListener('DOMContentLoaded', start);
 
 function start() {
+  document.removeEventListener('DOMContentLoaded', start)
+
   const dropAreas  = document.getElementsByClassName('croppable-droparea');
 
   Array.from(dropAreas).forEach((dropArea) => {
