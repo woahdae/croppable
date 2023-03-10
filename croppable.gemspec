@@ -4,8 +4,8 @@ Gem::Specification.new do |spec|
   spec.name        = "croppable"
   spec.version     = Croppable::VERSION
   spec.authors     = ["Steven Barragán Naranjo"]
-  spec.email       = ["me@steven.mx"]
-  spec.homepage    = "https://github.com/stevenbarragan/croppable"
+  spec.email       = ["stvnbarragan@gmail.com"]
+  spec.homepage    = "https://rubygems.org/gems/croppable"
   spec.summary     = "Easily crop images in Ruby on Rails with Cropper.js integration"
   spec.license     = "MIT"
   
