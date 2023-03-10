@@ -54,8 +54,12 @@ brew install vips
 ## Usage
 Add has_croppable into your model
 ```ruby
-has_croppable :logo, width: 300, height: 300
+has_croppable :logo, width: 300, height: 300, scale: 2
 ```
+
+`width` and `height` are in pixels and required.
+
+`scale: 2` will generate an image twice as big. Useful for retina display monitors. It defaults to 1.
 
 Add croppable_field to your form
 ```ruby

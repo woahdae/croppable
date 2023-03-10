@@ -27,12 +27,12 @@ module Croppable
       background_embed = background.dup
       background_embed << 255 if vips_img.bands == 4
 
-      vips_img = vips_img.resize(@data.scale * @setup[:resolution])
+      vips_img = vips_img.resize(@data.scale * @setup[:scale])
       vips_img = vips_img.embed(
-        x * @setup[:resolution],
-        y * @setup[:resolution],
-        @setup[:width] * @setup[:resolution],
-        @setup[:height] * @setup[:resolution],
+        x * @setup[:scale],
+        y * @setup[:scale],
+        @setup[:width] * @setup[:scale],
+        @setup[:height] * @setup[:scale],
         background: background_embed
       )
 
