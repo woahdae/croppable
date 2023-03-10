@@ -55,7 +55,7 @@ class HasCroppableTest < ActiveSupport::TestCase
     assert_enqueued_with job: Croppable::CropImageJob, args: [@product, :logo]
   end
 
-  test "delete cropable image" do
+  test "delete croppable image" do
     moon = {io: File.open(file_fixture("moon.jpg")), filename: "moon",    content_type: "image/jpeg"}
     sun  = {io: File.open(file_fixture("sun.jpg")),  filename: "cropped", content_type: "image/jpeg"}
 
