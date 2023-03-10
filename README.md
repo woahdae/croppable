@@ -38,7 +38,7 @@ import "croppable"
 
 Import croppable styles in your base stylesheet
 ```
-*= require croppable/style
+*= require croppable
 ```
 
 Install croppable migrations
