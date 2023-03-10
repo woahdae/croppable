@@ -13,11 +13,6 @@ gem "croppable"
 bin/rails croppable:install
 ```
 
-The asset_host config needs to be set on every environment
-```ruby
-config.asset_host = "http://localhost:3000"
-```
-
 ## Manual setup
 Install cropperjs JavaScript dependency
 ```
