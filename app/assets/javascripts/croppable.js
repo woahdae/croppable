@@ -1,18 +1,7 @@
 import Cropper from 'cropperjs';
 
-function isTurbolinksEnabled() {
-  try {
-    return Turbolinks.supported;
-  } catch(_) {
-    return false;
-  }
-}
-
-if(isTurbolinksEnabled()) {
-  document.addEventListener('turbo:load', start)
-} else {
-  document.addEventListener('DOMContentLoaded', start)
-}
+document.addEventListener('turbo:load', start)
+document.addEventListener('DOMContentLoaded', start)
 
 function start() {
   const dropAreas  = document.getElementsByClassName('croppable-droparea');
@@ -50,7 +39,7 @@ function start() {
         input.files = event.dataTransfer.files;
 
         const image = document.createElement('img');
-        image.src = URL.createObjectURL(file);
+        image.src   = URL.createObjectURL(file);
 
         updateImageDisplay(image, wrapper, true, input)
       }
@@ -85,7 +74,9 @@ function updateImageDisplay(image, wrapper, isNewImage, input) {
 
   dropArea.classList.add("inactive");
   container.classList.add("active");
-  deleteInput.checked = false;
+
+  deleteInput.checked    = false;
+  controls.style.display = "flex";
 
   cleanContainer()
 
@@ -94,20 +85,13 @@ function updateImageDisplay(image, wrapper, isNewImage, input) {
   const cropperImage  = cropper.getCropperImage();
   const cropperCanvas = cropper.getCropperCanvas();
 
-  controls.style.display = "flex";
+  cropperCanvas.style.backgroundColor = bgColorBtn.value;
 
   var saveTransform = false;
 
   cropperImage.$ready(() => {
     if (xInput.value != "" && !isNewImage) {
-      var waitForTranform = null;
-
-      // Turbolinks hack to actually apply initial transformation
-      if(isTurbolinksEnabled) {
-        waitForTranform = 10;
-      } else {
-        waitForTranform = 0;
-      }
+      var waitForTranform = 10; // needed due turbolinks 🤦
 
       setTimeout(() => {
         cropperImage.$setTransform(+scaleInput.value, 0, 0, +scaleInput.value, +xInput.value, +yInput.value);
@@ -116,6 +100,7 @@ function updateImageDisplay(image, wrapper, isNewImage, input) {
       }, waitForTranform)
     } else {
       const matrix     = cropperImage.$getTransform();
+
       xInput.value     = matrix[4];
       yInput.value     = matrix[5];
       scaleInput.value = matrix[0];
@@ -132,8 +117,6 @@ function updateImageDisplay(image, wrapper, isNewImage, input) {
       scaleInput.value = matrix[0];
     }
   });
-
-  cropperCanvas.style.backgroundColor = bgColorBtn.value;
 
   bgColorBtn.addEventListener("change", (event) => {
     event.preventDefault();
