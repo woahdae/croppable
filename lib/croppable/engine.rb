@@ -4,15 +4,25 @@ require "croppable/param"
 module Croppable
   class Engine < ::Rails::Engine
     isolate_namespace Croppable
+    config.eager_load_namespaces << Croppable
+
+    config.autoload_once_paths = %W(
+      #{root}/app/helpers
+      #{root}/app/models
+      #{root}/app/controllers
+      #{root}/app/controllers/concerns
+    )
 
     ActiveSupport.on_load(:active_record) do
       include Croppable::Model
     end
 
-    ActiveSupport.on_load(:action_controller_base) do
-      helper Croppable::Engine.helpers
+    initializer "croppable.helper" do
+      ActiveSupport.on_load(:action_controller_base) do
+        helper Croppable::Engine.helpers
 
-      include CleanCroppableParams
+        include Croppable::CleanCroppableParams
+      end
     end
 
     initializer "croppable.assets.precompile" do
