@@ -11,7 +11,7 @@ module Croppable
     end
 
     def perform()
-      @model.send("#{@attr_name}_original").open do |file|
+      original_image.open do |file|
         vips_img = Vips::Image.new_from_file(file.path)
 
         height = vips_img.height
@@ -32,10 +32,16 @@ module Croppable
 
         path = Tempfile.new('cropped').path + ".jpg"
 
-        vips_img.write_to_file(path, background: background, Q: 100)
+        vips_img.write_to_file(path, background: background, Q: Croppable.config.image_quality)
 
         @model.send("#{ @attr_name }_cropped").attach(io: File.open(path), filename: "cropped")
       end
+    end
+
+    private
+
+    def original_image
+      @model.send("#{@attr_name}_original")
     end
   end
 end

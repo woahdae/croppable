@@ -15,10 +15,10 @@ module Croppable
 
     def setup_croppable_params
       if params[:croppables]
-        params[:croppables].each do |(key, croppable)|
-          params[croppable[:base]] ||= {}
+        params[:croppables].each do |(input_name, croppable)|
+          params[input_name] ||= {}
           delete = croppable[:delete] == "1"
-          params[croppable[:base]][key] = Croppable::Param.new(croppable[:image], croppable[:data], delete: delete)
+          params[input_name][croppable[:attr]] = Croppable::Param.new(croppable[:image], croppable[:data], delete: delete)
         end
       end
     end

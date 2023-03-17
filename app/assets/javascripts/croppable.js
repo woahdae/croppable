@@ -1,167 +1,174 @@
-import Cropper from 'cropperjs';
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('cropperjs')) :
+  typeof define === 'function' && define.amd ? define(['cropperjs'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Croppable = factory(global.Cropper));
+})(this, (function (Cropper) { 'use strict';
 
-document.addEventListener('turbo:load', start);
-document.addEventListener('DOMContentLoaded', start);
+  function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-function start() {
-  document.removeEventListener('DOMContentLoaded', start)
+  var Cropper__default = /*#__PURE__*/_interopDefaultLegacy(Cropper);
 
-  const dropAreas  = document.getElementsByClassName('croppable-droparea');
+  function croppable() {
+    const dropAreas  = document.getElementsByClassName('croppable-droparea');
 
-  Array.from(dropAreas).forEach((dropArea) => {
-    const wrapper = dropArea.closest(".croppable-wrapper");
-    const input   = wrapper.querySelector(".croppable-input");
+    Array.from(dropAreas).forEach((dropArea) => {
+      const wrapper = dropArea.closest(".croppable-wrapper");
+      const input   = wrapper.querySelector(".croppable-input");
 
-    input.addEventListener('change', (event) => {
-      const file  = input.files[0];
-
-      const image = document.createElement('img');
-      image.src = URL.createObjectURL(file);
-
-      updateImageDisplay(image, wrapper, true, input)
-    });
-
-    dropArea.onclick = () => input.click()
-
-    dropArea.addEventListener("dragover", (event)=>{
-      event.preventDefault();
-      dropArea.classList.add("active");
-    });
-
-    dropArea.addEventListener("dragleave", ()=>{
-      dropArea.classList.remove("active");
-    });
-
-    dropArea.addEventListener("drop", (event)=>{
-      event.preventDefault();
-
-      const file  = event.dataTransfer.files[0];
-
-      if (file.type.match(/image.*/)) {
-        input.files = event.dataTransfer.files;
+      input.addEventListener('change', (event) => {
+        const file  = input.files[0];
 
         const image = document.createElement('img');
-        image.src   = URL.createObjectURL(file);
+        image.src = URL.createObjectURL(file);
 
-        updateImageDisplay(image, wrapper, true, input)
-      }
+        updateImageDisplay(image, wrapper, true, input);
+      });
 
-      dropArea.classList.remove("active");
+      dropArea.onclick = () => input.click();
+
+      dropArea.addEventListener("dragover", (event)=>{
+        event.preventDefault();
+        dropArea.classList.add("active");
+      });
+
+      dropArea.addEventListener("dragleave", ()=>{
+        dropArea.classList.remove("active");
+      });
+
+      dropArea.addEventListener("drop", (event)=>{
+        event.preventDefault();
+
+        const file  = event.dataTransfer.files[0];
+
+        if (file.type.match(/image.*/)) {
+          input.files = event.dataTransfer.files;
+
+          const image = document.createElement('img');
+          image.src   = URL.createObjectURL(file);
+
+          updateImageDisplay(image, wrapper, true, input);
+        }
+
+        dropArea.classList.remove("active");
+      });
     });
-  });
 
-  const images = document.getElementsByClassName('croppable-image');
+    const images = document.getElementsByClassName('croppable-image');
 
-  Array.from(images).forEach((image) => {
-    const wrapper = image.closest(".croppable-wrapper");
+    Array.from(images).forEach((image) => {
+      const wrapper = image.closest(".croppable-wrapper");
 
-    updateImageDisplay(image, wrapper, false, false)
-  });
-}
+      updateImageDisplay(image, wrapper, false, false);
+    });
+  }
 
-function updateImageDisplay(image, wrapper, isNewImage, input) {
-  const controls    = wrapper.querySelector(".croppable-controls");
-  const container   = wrapper.querySelector(".croppable-container");
-  const centerBtn   = wrapper.querySelector(".croppable-center");
-  const fitBtn      = wrapper.querySelector(".croppable-fit");
-  const deleteBtn   = wrapper.querySelector(".croppable-delete");
-  const bgColorBtn  = wrapper.querySelector(".croppable-bgcolor");
-  const xInput      = wrapper.querySelector(".croppable-x");
-  const yInput      = wrapper.querySelector(".croppable-y");
-  const scaleInput  = wrapper.querySelector(".croppable-scale");
-  const deleteInput = wrapper.querySelector(".croppable-input-delete");
-  const dropArea    = wrapper.querySelector(".croppable-droparea");
-  const width       = wrapper.dataset.width;
-  const height      = wrapper.dataset.height;
+  function updateImageDisplay(image, wrapper, isNewImage, input) {
+    const controls    = wrapper.querySelector(".croppable-controls");
+    const container   = wrapper.querySelector(".croppable-container");
+    const centerBtn   = wrapper.querySelector(".croppable-center");
+    const fitBtn      = wrapper.querySelector(".croppable-fit");
+    const deleteBtn   = wrapper.querySelector(".croppable-delete");
+    const bgColorBtn  = wrapper.querySelector(".croppable-bgcolor");
+    const xInput      = wrapper.querySelector(".croppable-x");
+    const yInput      = wrapper.querySelector(".croppable-y");
+    const scaleInput  = wrapper.querySelector(".croppable-scale");
+    const deleteInput = wrapper.querySelector(".croppable-input-delete");
+    const dropArea    = wrapper.querySelector(".croppable-droparea");
+    const width       = wrapper.dataset.width;
+    const height      = wrapper.dataset.height;
 
-  dropArea.classList.add("inactive");
-  container.classList.add("active");
+    dropArea.classList.add("inactive");
+    container.classList.add("active");
 
-  deleteInput.checked    = false;
-  controls.style.display = "flex";
+    deleteInput.checked    = false;
+    controls.style.display = "flex";
 
-  cleanContainer()
+    cleanContainer();
 
-  const cropper = new Cropper(image, {container, template: template(width, height)});
+    const cropper = new Cropper__default["default"](image, {container, template: template(width, height)});
 
-  const cropperImage  = cropper.getCropperImage();
-  const cropperCanvas = cropper.getCropperCanvas();
+    const cropperImage  = cropper.getCropperImage();
+    const cropperCanvas = cropper.getCropperCanvas();
 
-  cropperCanvas.style.backgroundColor = bgColorBtn.value;
+    cropperCanvas.style.backgroundColor = bgColorBtn.value;
 
-  var saveTransform = false;
+    var saveTransform = false;
 
-  cropperImage.$ready(() => {
-    if (xInput.value != "" && !isNewImage) {
-      var waitForTranform = 10; // needed due turbolinks 🤦
+    cropperImage.$ready(() => {
+      if (xInput.value != "" && !isNewImage) {
+        var waitForTranform = 10; // needed due turbolinks 🤦
 
-      setTimeout(() => {
-        cropperImage.$setTransform(+scaleInput.value, 0, 0, +scaleInput.value, +xInput.value, +yInput.value);
+        setTimeout(() => {
+          cropperImage.$setTransform(+scaleInput.value, 0, 0, +scaleInput.value, +xInput.value, +yInput.value);
+
+          saveTransform = true;
+        }, waitForTranform);
+      } else {
+        const matrix     = cropperImage.$getTransform();
+
+        xInput.value     = matrix[4];
+        yInput.value     = matrix[5];
+        scaleInput.value = matrix[0];
 
         saveTransform = true;
-      }, waitForTranform)
-    } else {
-      const matrix     = cropperImage.$getTransform();
+      }
+    });
 
-      xInput.value     = matrix[4];
-      yInput.value     = matrix[5];
-      scaleInput.value = matrix[0];
+    cropperImage.addEventListener('transform', (event) => {
+      if(saveTransform) {
+        const matrix = event.detail.matrix;
+        xInput.value     = matrix[4];
+        yInput.value     = matrix[5];
+        scaleInput.value = matrix[0];
+      }
+    });
 
-      saveTransform = true;
-    }
-  })
+    bgColorBtn.addEventListener("change", (event) => {
+      event.preventDefault();
+      cropperCanvas.style.backgroundColor = event.target.value;
+    });
 
-  cropperImage.addEventListener('transform', (event) => {
-    if(saveTransform) {
-      const matrix = event.detail.matrix;
-      xInput.value     = matrix[4];
-      yInput.value     = matrix[5];
-      scaleInput.value = matrix[0];
-    }
-  });
+    centerBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      cropperImage.$center('cover');
+    });
 
-  bgColorBtn.addEventListener("change", (event) => {
-    event.preventDefault();
-    cropperCanvas.style.backgroundColor = event.target.value;
-  })
+    fitBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      cropperImage.$center('contain');
+    });
 
-  centerBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-    cropperImage.$center('cover')
-  })
+    deleteBtn.addEventListener("click", (event) => {
+      event.preventDefault();
 
-  fitBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-    cropperImage.$center('contain')
-  })
+      deleteInput.checked = true;
 
-  deleteBtn.addEventListener("click", (event) => {
-    event.preventDefault();
+      if (input) { input.value = ""; }
 
-    deleteInput.checked = true;
+      cleanContainer();
 
-    if (input) { input.value = ""; }
+      dropArea.classList.remove("inactive");
+      container.classList.remove("active");
 
-    cleanContainer()
+      controls.style.display = "none";
+    });
 
-    dropArea.classList.remove("inactive");
-    container.classList.remove("active");
-
-    controls.style.display = "none";
-  })
-
-  function cleanContainer() {
-    while(container.firstChild) {
-      container.removeChild(container.lastChild);
+    function cleanContainer() {
+      while(container.firstChild) {
+        container.removeChild(container.lastChild);
+      }
     }
   }
-}
 
-function template(width, height) {
-  return `
+  function template(width, height) {
+    return `
 <cropper-canvas style="height: ${height}px; width: ${width}px;">
   <cropper-image slottable></cropper-image>
   <cropper-handle action="move" plain></cropper-handle>
 </cropper-canvas>
   `
-}
+  }
+
+  return croppable;
+
+}));

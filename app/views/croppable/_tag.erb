@@ -3,8 +3,8 @@
     <%= render 'croppable/uploader' %>
   </div>
   <%= fields_for :croppables do |croppables| %>
-    <%= croppables.fields_for method do |croppable| %>
-      <%= croppable.hidden_field :base, value: name %>
+    <%= croppables.fields_for name do |croppable| %>
+      <%= croppable.hidden_field :attr, value: method %>
       <%= croppable.file_field :image, class: "croppable-input",
         accept: ActiveStorage.web_image_content_types.join(",") %>
       <%= croppable.check_box :delete, class: "croppable-input-delete" %>

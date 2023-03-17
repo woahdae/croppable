@@ -10,14 +10,14 @@ class CropImagesTest < ApplicationSystemTestCase
 
     find(".croppable-droparea").drop file_fixture("moon.jpg").to_path
 
-    has_no_selector? ".croppable-droparead"
+    assert_no_selector ".croppable-droparea"
     assert_selector  "cropper-canvas"
     assert_selector  ".croppable-controls"
 
     click_button "Create Product"
 
     product = Product.last
-    
+
     assert product.logo_original.present?
     assert product.logo_croppable_data.present?
     assert product.logo_croppable_data.x.present?
