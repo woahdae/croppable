@@ -11,15 +11,33 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :name, style: "display: block" %>
-    <%= form.text_field :name %>
+  <div id="product-fields">
+    <div>
+      <%= form.label :name, style: "display: block" %>
+      <%= form.text_field :name %>
+    </div>
+
+    <div>
+      <%= form.label :logo, style: "display: block" %>
+      <%= form.croppable_field :logo %>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :logo, style: "display: block" %>
-    <%= form.croppable_field :logo %>
-  </div>
+  <h2>Widgets</h2>
+
+  <% form.object.widgets << Product::Widget.new if form.object.widgets.blank? %>
+  <%= form.fields_for :widgets do |wf| %>
+    <div id="<%= dom_id(wf.object) %>">
+      <div>
+        <%= wf.label :name, style: "display: block" %>
+        <%= wf.text_field :name %>
+      </div>
+
+      <div>
+        <%= wf.croppable_field :image %>
+      </div>
+    </div>
+  <% end %>
 
   <div>
     <%= form.submit %>
