@@ -1,4 +1,6 @@
 class ProductsController < ApplicationController
+  include Croppable::PermittableParams
+
   before_action :set_product, only: %i[ show edit update destroy ]
 
   # GET /products
@@ -53,6 +55,10 @@ class ProductsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def product_params
-      params.require(:product).permit(:name, :logo)
+      params.require(:product).permit(
+        :name,
+        logo: croppable_params,
+        widgets_attributes: [:name, { image: croppable_params }]
+      )
     end
 end
