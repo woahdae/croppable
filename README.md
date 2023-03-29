@@ -63,7 +63,9 @@ form.croppable_field :logo
 
 Update controller strong paramenters to permit each croppable parameter
 ```ruby
-params.require(:model).permit(..., :logo)
+include Croppable::PermittableParams
+
+params.require(:model).permit(..., logo: croppable_params)
 ```
 
 Display cropped image in your view

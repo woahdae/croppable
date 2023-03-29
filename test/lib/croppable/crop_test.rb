@@ -6,7 +6,7 @@ module Croppable
       @file = File.open(file_fixture("moon.jpg"))
       image   = {io: @file, filename: "moon", content_type: "image/jpeg"}
       data    = {x: 20, y: 42, scale: 0.5, background_color: "#BADA55"}
-      logo    = Croppable::Param.new(image, data)
+      logo    = { image: image, data: data }
       @product = Product.new(name: :moon, logo: logo)
       @product.save
     end
