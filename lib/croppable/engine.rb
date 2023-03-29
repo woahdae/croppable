@@ -18,6 +18,10 @@ module Croppable
       end
     end
 
+    ActiveSupport.on_load(:action_controller_base) do
+      helper Croppable::Engine.helpers
+    end
+
     initializer "croppable.assets.precompile" do
       config.after_initialize do |app|
         if app.config.respond_to?(:assets)
