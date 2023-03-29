@@ -2,30 +2,27 @@
   <div class="croppable-droparea" style="width: <%= width %>px; height: <%= height %>px;">
     <%= render 'croppable/uploader' %>
   </div>
-  <%= fields_for :croppables do |croppables| %>
-    <%= croppables.fields_for name do |croppable| %>
-      <%= croppable.hidden_field :attr, value: method %>
-      <%= croppable.file_field :image, class: "croppable-input",
-        accept: ActiveStorage.web_image_content_types.join(",") %>
-      <%= croppable.check_box :delete, class: "croppable-input-delete" %>
-      <div class="croppable-preview">
-        <div class="croppable-container">
-          <% if original.present? %>
-            <%= image_tag original, width: width, height: height, class: "croppable-image" %>
-          <% end %>
-        </div>
-        <div class="croppable-controls">
-          <%= croppable.fields_for :data, model: data do |data_form| %>
-            <%= data_form.hidden_field :x, class: "croppable-x" %>
-            <%= data_form.hidden_field :y, class: "croppable-y" %>
-            <%= data_form.hidden_field :scale, class: "croppable-scale" %>
-            <%= data_form.color_field :background_color, class: "croppable-bgcolor", value: data&.background_color || "#FFFFFF" %>
-          <% end %>
-          <button class="croppable-center"></button>
-          <button class="croppable-fit"></button>
-          <button class="croppable-delete"></button>
-        </div>
+  <%= form.fields_for method do |croppable| %>
+    <%= croppable.file_field :image, class: "croppable-input",
+      accept: ActiveStorage.web_image_content_types.join(",") %>
+    <%= croppable.check_box :delete, class: "croppable-input-delete" %>
+    <div class="croppable-preview">
+      <div class="croppable-container">
+        <% if original.present? %>
+          <%= image_tag original, width: width, height: height, class: "croppable-image" %>
+        <% end %>
       </div>
-    <% end %>
+      <div class="croppable-controls">
+        <%= croppable.fields_for :data, model: data do |data_form| %>
+          <%= data_form.hidden_field :x, class: "croppable-x" %>
+          <%= data_form.hidden_field :y, class: "croppable-y" %>
+          <%= data_form.hidden_field :scale, class: "croppable-scale" %>
+          <%= data_form.color_field :background_color, class: "croppable-bgcolor", value: data&.background_color || "#FFFFFF" %>
+        <% end %>
+        <button class="croppable-center"></button>
+        <button class="croppable-fit"></button>
+        <button class="croppable-delete"></button>
+      </div>
+    </div>
   <% end %>
 <% end %>
