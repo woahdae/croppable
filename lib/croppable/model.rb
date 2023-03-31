@@ -30,7 +30,7 @@ module Croppable
           end
 
           def #{ name }=(croppable_param)
-            if croppable_param[:delete] == '1'
+            if croppable_param.nil? || croppable_param[:delete] == '1'
               self.#{ name }_original       = nil
               self.#{ name }_cropped        = nil
               self.#{ name }_croppable_data = nil

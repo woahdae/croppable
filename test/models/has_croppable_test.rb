@@ -89,4 +89,16 @@ class HasCroppableTest < ActiveSupport::TestCase
 
     assert_no_enqueued_jobs only: Croppable::CropImageJob
   end
+
+  test "deletes images when assigned nil" do
+    moon = {io: File.open(file_fixture("moon.jpg")), filename: "moon",    content_type: "image/jpeg"}
+    @product.logo_original.attach(moon)
+    @product.logo_cropped.attach(moon)
+    assert @product.logo_original.present? # sanity
+
+    @product.logo = nil
+
+    assert @product.logo_original.blank?
+    assert @product.logo_cropped.blank?
+  end
 end
