@@ -1,4 +1,5 @@
 require "croppable/model"
+require "croppable/config"
 
 module Croppable
   class Engine < ::Rails::Engine
@@ -16,10 +17,6 @@ module Croppable
       ActiveSupport.on_load(:action_controller_base) do
         helper Croppable::Engine.helpers
       end
-    end
-
-    ActiveSupport.on_load(:action_controller_base) do
-      helper Croppable::Engine.helpers
     end
 
     initializer "croppable.assets.precompile" do
