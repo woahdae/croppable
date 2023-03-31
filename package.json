@@ -1,6 +1,6 @@
 {
   "name": "croppable",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Easily crop images in Ruby on Rails with Cropper.js integration",
   "main": "app/assets/javascripts/croppable.js",
   "module": "app/assets/javascripts/croppable.esm.js",
