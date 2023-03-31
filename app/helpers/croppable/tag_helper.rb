@@ -8,7 +8,7 @@ module Croppable
       data     = object.send(:"#{ method }_croppable_data")
 
       render "croppable/tag", width: width, height: height, method: method, name: name,
-        original: original, data: data, form: options['form']
+        original: original, data: data, form: options['form'], disabled: options['disabled']
     end
   end
 end
