@@ -14,7 +14,7 @@ module Croppable
     test "crop image to the specified size" do
       @product.reload
 
-      Croppable::Crop.new(@product, :logo, @file).perform()
+      Croppable::Crop.new(@product, :logo).perform()
 
       @product.reload
 
