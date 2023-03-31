@@ -13,6 +13,13 @@ cropper-canvas {
   margin-bottom: 1em;
 }
 
+.croppable-wrapper.disabled svg g path,
+.croppable-wrapper.disabled svg g use
+ {
+  cursor: default;
+  fill: rgba(180,180,180,0.5)
+}
+
 .croppable-controls {
   display: none;
   flex-direction: column;

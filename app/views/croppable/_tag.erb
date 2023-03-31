@@ -1,11 +1,11 @@
-<%= content_tag :div, class: "croppable-wrapper", data: { width: width, height: height } do %>
+<%= content_tag :div, class: "croppable-wrapper#{disabled ? ' disabled' : ''}", data: { width: width, height: height } do %>
   <div class="croppable-droparea" style="width: <%= width %>px; height: <%= height %>px;">
     <%= render 'croppable/uploader' %>
   </div>
   <%= form.fields_for method do |croppable| %>
     <%= croppable.file_field :image, class: "croppable-input",
-      accept: ActiveStorage.web_image_content_types.join(",") %>
-    <%= croppable.check_box :delete, class: "croppable-input-delete" %>
+      accept: ActiveStorage.web_image_content_types.join(","), disabled: disabled %>
+    <%= croppable.check_box :delete, class: "croppable-input-delete", disabled: disabled %>
     <div class="croppable-preview">
       <div class="croppable-container">
         <% if original.present? %>
@@ -14,10 +14,10 @@
       </div>
       <div class="croppable-controls">
         <%= croppable.fields_for :data, model: data do |data_form| %>
-          <%= data_form.hidden_field :x, class: "croppable-x" %>
-          <%= data_form.hidden_field :y, class: "croppable-y" %>
-          <%= data_form.hidden_field :scale, class: "croppable-scale" %>
-          <%= data_form.color_field :background_color, class: "croppable-bgcolor", value: data&.background_color || "#FFFFFF" %>
+          <%= data_form.hidden_field :x, class: "croppable-x", disabled: disabled %>
+          <%= data_form.hidden_field :y, class: "croppable-y", disabled: disabled %>
+          <%= data_form.hidden_field :scale, class: "croppable-scale", disabled: disabled %>
+          <%= data_form.color_field :background_color, class: "croppable-bgcolor", value: data&.background_color || "#FFFFFF", disabled: disabled %>
         <% end %>
         <button class="croppable-center"></button>
         <button class="croppable-fit"></button>
