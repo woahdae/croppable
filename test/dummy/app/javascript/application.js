@@ -1,1 +1,3 @@
-import "croppable"
+import croppable from "croppable"
+
+croppable()

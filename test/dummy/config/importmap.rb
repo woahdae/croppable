@@ -15,4 +15,4 @@ pin "@cropper/element-viewer", to: "https://ga.jspm.io/npm:@cropper/element-view
 pin "@cropper/elements", to: "https://ga.jspm.io/npm:@cropper/elements@2.0.0-beta.2/dist/elements.esm.raw.js"
 pin "@cropper/utils", to: "https://ga.jspm.io/npm:@cropper/utils@2.0.0-beta.2/dist/utils.esm.raw.js"
 
-pin "croppable"
+pin "croppable", to: 'croppable.esm'
