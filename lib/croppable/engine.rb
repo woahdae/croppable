@@ -28,10 +28,9 @@ module Croppable
     initializer "croppable.assets.precompile" do
       config.after_initialize do |app|
         if app.config.respond_to?(:assets)
-          app.config.assets.precompile += %w( croppable.js croppable.css  )
+          app.config.assets.precompile += %w( croppable.js croppable.esm.js croppable.css  )
         end
       end
     end
-
   end
 end
