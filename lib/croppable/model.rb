@@ -3,7 +3,9 @@ module Croppable
     extend ActiveSupport::Concern
 
     class_methods do
-      def has_croppable(name, width:, height:, scale: 1)
+      def has_croppable(name, width:, height:, scale: nil)
+        scale ||= Croppable.config.default_scale
+
         has_one_attached :"#{ name }_cropped"
         has_one_attached :"#{ name }_original"
 
