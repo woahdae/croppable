@@ -49,12 +49,22 @@ brew install vips
 ## Usage
 Add has_croppable into your model
 ```ruby
-has_croppable :logo, width: 300, height: 300, scale: 2
+has_croppable :logo, width: 300, height: 300, scale: 2 do |attachable|
+ attachable.variant :thumb, resize_to_fill: [100, 100]
+ attachable.variant :medium, resize_to_fill: [300, 300]
+end
 ```
 
 `width` and `height` are in pixels and required.
 
 `scale: 2` will generate an image twice as big. Useful for retina display monitors. It defaults to 1.
+
+The block is passed to `has_one_attached`, supporting [Rails 7's predefined
+variant blocks](https://github.com/rails/rails/pull/39135). If you're using
+croppable's `scale` option with a value > 1, you'll have to do the math
+yourself for the variant dimensions to match the base scaled image. See the
+[ImageProcessing docs](https://github.com/janko/image_processing/tree/master)
+for the processing options.
 
 Add croppable_field to your form
 ```ruby
