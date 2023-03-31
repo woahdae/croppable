@@ -1,3 +1,10 @@
+/* For some reason cropperjs makes the canvas a min-width of 200px,
+ * but a min-height of 100px. This breaks uploading small square logos.
+ * Let's set the min-width to match the min-height. */
+cropper-canvas {
+  min-width: 100px;
+}
+
 .croppable-preview {
   display: flex;
 }
