@@ -13,10 +13,6 @@ module Croppable
       #{root}/app/controllers/concerns
     )
 
-    ActiveSupport.on_load(:active_record) do
-      include Croppable::Model
-    end
-
     initializer "croppable.helper" do
       ActiveSupport.on_load(:action_controller_base) do
         helper Croppable::Engine.helpers
@@ -32,6 +28,5 @@ module Croppable
         end
       end
     end
-
   end
 end
