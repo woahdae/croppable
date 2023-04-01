@@ -27,7 +27,7 @@ class CropImagesTest < ApplicationSystemTestCase
     assert product.logo_croppable_data.scale.present?
     assert product.logo_croppable_data.background_color.present?
 
-    assert_enqueued_with job: Croppable::CropImageJob, args: [product, :logo]
+    assert_enqueued_with job: Croppable::CropImageJob
   end
 
   test "upload an image using nested attributes" do
@@ -54,7 +54,7 @@ class CropImagesTest < ApplicationSystemTestCase
     assert widget.image_croppable_data.scale.present?
     assert widget.image_croppable_data.background_color.present?
 
-    assert_enqueued_with job: Croppable::CropImageJob, args: [widget, :image]
+    assert_enqueued_with job: Croppable::CropImageJob
   end
 
   test "upload a new image to crop on an existing instance" do
@@ -89,7 +89,7 @@ class CropImagesTest < ApplicationSystemTestCase
       fill_in class: "croppable-bgcolor", with: "#c0ffee"
     end
 
-      click_button "Update Product"
+    click_button "Update Product"
 
     product.reload
 
@@ -101,7 +101,7 @@ class CropImagesTest < ApplicationSystemTestCase
     assert_equal product.logo_croppable_data.scale, 1.171875
     assert_equal product.logo_croppable_data.background_color, "#c0ffee"
 
-    assert_enqueued_with job: Croppable::CropImageJob, args: [product, :logo]
+    assert_enqueued_with job: Croppable::CropImageJob
   end
 
   test "delete a croppable image" do

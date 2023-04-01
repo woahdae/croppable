@@ -12,8 +12,11 @@ module Croppable
         has_one :"#{ name }_croppable_data", -> { where(name: name) },
           as: :croppable, inverse_of: :croppable, dependent: :destroy, class_name: "Croppable::Datum"
 
-        after_commit if: -> { to_crop_croppable[name] } do
-          Croppable::CropImageJob.perform_later(self, name)
+        after_save_commit if: -> { to_crop_croppable[name] } do
+          Croppable::CropImageJob.perform_later(
+            self, name,
+            uploaded_file: to_crop_croppable[name]
+          )
         end
 
         generated_association_methods.class_eval <<-CODE, __FILE__, __LINE__ + 1
@@ -35,16 +38,38 @@ module Croppable
               self.#{ name }_cropped        = nil
               self.#{ name }_croppable_data = nil
             else
-              self.#{ name }_original = croppable_param[:image] if croppable_param[:image]
+              if (uploaded_file = croppable_param[:image])
+                self.#{ name }_original = uploaded_file
+              end
 
               if self.#{ name }_original.present?
                 if self.#{ name }_croppable_data
                   self.#{ name }_croppable_data.update(croppable_param[:data])
                 else
-                  self.#{ name }_croppable_data = Croppable::Datum.new(croppable_param[:data].merge(name: "#{ name }"))
+                  self.#{ name }_croppable_data =
+                    Croppable::Datum.new(
+                      croppable_param[:data].merge(name: "#{ name }")
+                    )
                 end
 
-                to_crop_croppable[:#{ name }] = self.#{ name }_croppable_data.updated_at_previously_changed? || self.#{ name }_croppable_data.new_record?
+                if self.#{ name }_croppable_data.updated_at_previously_changed? ||
+                  self.#{ name }_croppable_data.new_record?
+                  if uploaded_file.respond_to?(:tempfile)
+                    path = uploaded_file.tempfile.path
+                    filename = uploaded_file.original_filename
+                    content_type = uploaded_file.content_type
+                  elsif uploaded_file&.[](:io)
+                    path = uploaded_file[:io].path
+                    filename = uploaded_file[:filename]
+                    content_type = uploaded_file[:content_type]
+                  end
+
+                  to_crop_croppable[:#{ name }] = {
+                    path: path,
+                    original_filename: filename,
+                    content_type: content_type
+                  }
+                end
               end
             end
           end
