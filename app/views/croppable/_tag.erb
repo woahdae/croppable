@@ -1,4 +1,4 @@
-<%= content_tag :div, class: "croppable-wrapper#{disabled ? ' disabled' : ''}", data: { width: width, height: height } do %>
+<%= content_tag :div, id: "croppable-#{dom_id(form.object)}-#{method}", class: "croppable-wrapper#{disabled ? ' disabled' : ''}", data: { width: width, height: height } do %>
   <div class="croppable-droparea" style="width: <%= width %>px; height: <%= height %>px;">
     <%= render 'croppable/uploader' %>
   </div>
