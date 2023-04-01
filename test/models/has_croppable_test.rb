@@ -30,7 +30,17 @@ class HasCroppableTest < ActiveSupport::TestCase
     assert_equal @product.logo_croppable_data.scale,            data[:scale]
     assert_equal @product.logo_croppable_data.background_color, data[:background_color]
 
-    assert_enqueued_with job: Croppable::CropImageJob, args: [@product, :logo]
+    assert_enqueued_with job: Croppable::CropImageJob, args: [
+      @product,
+      :logo,
+      {
+        uploaded_file: {
+          path: "/Users/woody/Src/croppable/test/fixtures/files/moon.jpg",
+          original_filename: "moon",
+          content_type: "image/jpeg"
+        }
+      }
+    ]
   end
 
   test "can crop an existing image" do
@@ -52,7 +62,17 @@ class HasCroppableTest < ActiveSupport::TestCase
     assert_equal @product.logo_croppable_data.scale,            data[:scale]
     assert_equal @product.logo_croppable_data.background_color, data[:background_color]
 
-    assert_enqueued_with job: Croppable::CropImageJob, args: [@product, :logo]
+    assert_enqueued_with job: Croppable::CropImageJob, args: [
+      @product,
+      :logo,
+      {
+        uploaded_file: {
+          path: nil,
+          original_filename: nil,
+          content_type: nil
+        }
+      }
+    ]
   end
 
   test "delete croppable image" do
