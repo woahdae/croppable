@@ -11,18 +11,34 @@ module Croppable
       @product.save
     end
 
-    test "crop image to the specified size" do
+    test "crop image to the specified size with vips" do
       @product.reload
 
-      Croppable::Crop.new(@product, :logo).perform()
+      Croppable::Crop.new(@product, :logo, backend: :vips).perform()
 
       @product.reload
 
       @product.logo.open do |logo|
         image = Vips::Image.new_from_file(logo.path)
 
-        assert_equal image.width,  200
-        assert_equal image.height, 300
+        assert_equal 200, image.width
+        assert_equal 300, image.height
+      end
+    end
+
+    test "crop image to the specified size with mini_magick" do
+      require 'mini_magick'
+      @product.reload
+
+      Croppable::Crop.new(@product, :logo, backend: :mini_magick).perform()
+
+      @product.reload
+
+      @product.logo.open do |logo|
+        image = MiniMagick::Image.new(logo.path)
+
+        assert_equal 200, image.width
+        assert_equal 300, image.height
       end
     end
   end
