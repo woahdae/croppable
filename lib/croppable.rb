@@ -2,5 +2,5 @@ require "croppable/version"
 require "croppable/engine"
 
 module Croppable
-  # Your code goes here...
+  extend ActiveSupport::Autoload
 end
