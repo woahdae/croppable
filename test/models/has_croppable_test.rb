@@ -20,7 +20,7 @@ class HasCroppableTest < ActiveSupport::TestCase
     image  = {io: File.open(file_fixture("moon.jpg")), filename: "moon", content_type: "image/jpeg"}
     data   = {x: 20, y: 42, scale: 0.5, background_color: "#BADA55"}
 
-    @product.logo = Croppable::Param.new(image, data)
+    @product.logo = { image: image, data: data }
     @product.save
 
     assert @product.logo_original.present?
@@ -42,7 +42,7 @@ class HasCroppableTest < ActiveSupport::TestCase
 
     data = {x: 20, y: 42, scale: 0.5, background_color: "#BADA55"}
 
-    @product.logo = Croppable::Param.new(nil, data)
+    @product.logo = { image: nil, data: data }
     @product.save
 
     assert @product.logo_original.present?
@@ -64,7 +64,7 @@ class HasCroppableTest < ActiveSupport::TestCase
     @product.logo_croppable_data = Croppable::Datum.new()
     @product.save
 
-    @product.logo = Croppable::Param.new(nil, {}, delete: true)
+    @product.logo = { image: nil, data: {}, delete: '1' }
     @product.save
 
     refute @product.logo_original.present?
@@ -84,7 +84,7 @@ class HasCroppableTest < ActiveSupport::TestCase
     @product.logo_croppable_data = Croppable::Datum.new(data)
     @product.save
 
-    @product.logo = Croppable::Param.new(nil, data)
+    @product.logo = { image: nil, data: data }
     @product.save
 
     assert_no_enqueued_jobs only: Croppable::CropImageJob
