@@ -49,6 +49,11 @@ brew install vips
 ## Usage
 Add has_croppable into your model
 ```ruby
+include Croppable::Model
+
+has_croppable :logo, width: 300, height: 300, scale: 2
+
+# Using predefined variants
 has_croppable :logo, width: 300, height: 300, scale: 2 do |attachable|
  attachable.variant :thumb, resize_to_fill: [100, 100]
  attachable.variant :medium, resize_to_fill: [300, 300]
