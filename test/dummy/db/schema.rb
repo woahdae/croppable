@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_28_223705) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_28_234914) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -52,6 +52,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_28_223705) do
     t.index ["croppable_type", "croppable_id"], name: "index_croppable_data_on_croppable"
   end
 
+  create_table "product_widgets", force: :cascade do |t|
+    t.string "name"
+    t.integer "product_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_product_widgets_on_product_id"
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -60,4 +68,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_28_223705) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "product_widgets", "products"
 end

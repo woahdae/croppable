@@ -8,7 +8,7 @@ module Croppable
       data     = object.send(:"#{ method }_croppable_data")
 
       render "croppable/tag", width: width, height: height, method: method, name: name,
-        original: original, data: data
+        original: original, data: data, form: options['form']
     end
   end
 end
@@ -40,7 +40,7 @@ module ActionView::Helpers
     def croppable_field(method, options = {})
       self.multipart = true
 
-      @template.croppable_field(@object_name, method, objectify_options(options))
+      @template.croppable_field(@object_name, method, objectify_options(options).merge(form: self))
     end
   end
 end

@@ -1,5 +1,4 @@
 require "croppable/model"
-require "croppable/param"
 
 module Croppable
   class Engine < ::Rails::Engine
@@ -16,8 +15,6 @@ module Croppable
     initializer "croppable.helper" do
       ActiveSupport.on_load(:action_controller_base) do
         helper Croppable::Engine.helpers
-
-        include Croppable::CleanCroppableParams
       end
     end
 
