@@ -93,6 +93,15 @@ Original image can be accessed in \<croppable\>_original
 model.logo_original
 ```
 
+Configuration on global defaults can be done in an initializer:
+
+```ruby
+Rails.application.config.to_prepare do
+  Croppable.config.default_scale = 2 # default 1
+  Croppable.config.image_quality = 80 # default 100
+end
+```
+
 NOTE: Images are cropped in a background job after model gets saved so they might not be immediately available
 
 ## Contributing

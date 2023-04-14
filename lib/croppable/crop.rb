@@ -32,7 +32,7 @@ module Croppable
 
         path = Tempfile.new('cropped').path + ".jpg"
 
-        vips_img.write_to_file(path, background: background, Q: 100)
+        vips_img.write_to_file(path, background: background, Q: Croppable.config.image_quality)
 
         @model.send("#{ @attr_name }_cropped").attach(io: File.open(path), filename: "cropped")
       end
