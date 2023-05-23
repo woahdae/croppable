@@ -35,10 +35,35 @@ class HasCroppableTest < ActiveSupport::TestCase
       :logo,
       {
         uploaded_file: {
-          path: "/Users/woody/Src/croppable/test/fixtures/files/moon.jpg",
+          path: File.expand_path('test/fixtures/files/moon.jpg'),
           original_filename: "moon",
           content_type: "image/jpeg"
-        }
+        },
+        headless: {}
+      }
+    ]
+  end
+
+  test "can crop a new image headless (without data)" do
+    image = { io: File.open(file_fixture("moon.jpg")), filename: "moon" }
+
+    @product.logo = image
+    @product.save
+
+    assert @product.logo_original.present?
+
+    assert_equal nil, @product.logo_croppable_data
+
+    assert_enqueued_with job: Croppable::CropImageJob, args: [
+      @product,
+      :logo,
+      {
+        uploaded_file: {
+          path: File.expand_path('test/fixtures/files/moon.jpg'),
+          original_filename: "moon",
+          content_type: nil
+        },
+        headless: {}
       }
     ]
   end
@@ -70,8 +95,36 @@ class HasCroppableTest < ActiveSupport::TestCase
           path: nil,
           original_filename: nil,
           content_type: nil
-        }
-      }
+        },
+        headless: {}
+      },
+    ]
+  end
+
+  test "can overwrite an existing image via headless" do
+    old_img = {io: File.open(file_fixture("moon.jpg")), filename: "moon", content_type: "image/jpeg"}
+
+    @product.logo_original.attach(old_img)
+    @product.build_logo_croppable_data
+    @product.save
+
+    new_img = {io: File.open(file_fixture("sun.jpg")), filename: "sun", content_type: "image/jpeg"}
+    @product.logo = { image: new_img, data: nil }
+    @product.save
+
+    assert @product.logo_original.present?
+
+    assert_enqueued_with job: Croppable::CropImageJob, args: [
+      @product,
+      :logo,
+      {
+        uploaded_file: {
+          path: File.expand_path('test/fixtures/files/sun.jpg'),
+          original_filename: 'sun',
+          content_type: 'image/jpeg'
+        },
+        headless: {}
+      },
     ]
   end
 
