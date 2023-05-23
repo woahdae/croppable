@@ -19,7 +19,7 @@ class CropImagesTest < ApplicationSystemTestCase
     click_button "Create Product"
 
     product = Product.last
-    
+
     assert product.logo_original.present?
     assert product.logo_croppable_data.present?
     assert product.logo_croppable_data.x.present?

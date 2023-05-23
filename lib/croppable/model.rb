@@ -3,7 +3,19 @@ module Croppable
     extend ActiveSupport::Concern
 
     class_methods do
-      def has_croppable(name, width:, height:, scale: nil, &block)
+      # `headless` is only used when setting images without the browser, in
+      # which case it can be:
+      #
+      # * `{ fit: :contain, bg: '#ffffff' }` (default): padded with bars on the
+      #   provided images' short dimension unless provided image matches
+      #   defined dimensions exactly. Bars are padded with `:bg`, which must be
+      #   a hex code. Defaults to `Croppable.config.headless_bg`, which itself
+      #   defaults to `#ffffff`.
+      # * `{ fit: :cover }` - provided images' long dimension is cropped, so
+      #   that the entire image space is filled without needing to pad.
+      #
+      # Default `fit` can be set via `Croppable.config.headless_fit
+      def has_croppable(name, width:, height:, scale: nil, headless: {}, &block)
         scale ||= Croppable.config.default_scale
 
         has_one_attached :"#{ name }_cropped", &block
@@ -15,7 +27,8 @@ module Croppable
         after_save_commit if: -> { to_crop_croppable[name] } do
           Croppable::CropImageJob.perform_later(
             self, name,
-            uploaded_file: to_crop_croppable[name]
+            uploaded_file: to_crop_croppable[name],
+            headless: headless
           )
         end
 
@@ -38,22 +51,23 @@ module Croppable
               self.#{ name }_cropped        = nil
               self.#{ name }_croppable_data = nil
             else
-              if (uploaded_file = croppable_param[:image])
-                self.#{ name }_original = uploaded_file
-              end
+              uploaded_file = croppable_param[:image]
+              # For headless, we can mirror the `has_one_attached` API
+              uploaded_file ||= croppable_param if croppable_param[:io].present?
+              self.#{ name }_original = uploaded_file if uploaded_file
 
               if self.#{ name }_original.present?
-                if self.#{ name }_croppable_data
-                  self.#{ name }_croppable_data.update(croppable_param[:data])
-                else
-                  self.#{ name }_croppable_data =
-                    Croppable::Datum.new(
-                      croppable_param[:data].merge(name: "#{ name }")
-                    )
+                if (data = croppable_param[:data])
+                  if #{ name }_croppable_data
+                    #{ name }_croppable_data.update(data)
+                  else
+                    build_#{ name }_croppable_data(data.merge(name: "#{ name }"))
+                  end
                 end
 
-                if self.#{ name }_croppable_data.updated_at_previously_changed? ||
-                  self.#{ name }_croppable_data.new_record?
+                if self.#{ name }_croppable_data&.updated_at_previously_changed? ||
+                  self.#{ name }_croppable_data&.new_record? ||
+                  croppable_param[:data].blank?
                   if uploaded_file.respond_to?(:tempfile)
                     path = uploaded_file.tempfile.path
                     filename = uploaded_file.original_filename

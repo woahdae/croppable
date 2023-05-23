@@ -2,21 +2,22 @@ require 'open-uri'
 
 module Croppable
   class Crop
-    def backend
-      @backend || Croppable.config.crop_backend
-    end
-
-    def initialize(model, attr_name, uploaded_file: nil, backend: nil)
+    # `fit` and `bg` are used for "headless" mode where there is no crop data.
+    # `bg_color` is only used in headless mode when `fit` is `:contain` (the
+    # default) and fill bars will be added to the image.
+    def initialize(model, attr_name, uploaded_file: nil, backend: nil, headless: {})
       @model         = model
       @attr_name     = attr_name
       @uploaded_file = uploaded_file || {}
-      @backend       = backend
+      @headless_fit  = headless[:fit] || Croppable.config.headless_fit
+      @headless_bg   = headless[:bg] || Croppable.config.headless_bg
+      @backend       = backend || Croppable.config.crop_backend
       @data          = model.send("#{attr_name}_croppable_data")
       @setup         = model.send("#{attr_name}_croppable_setup")
     end
 
-    def perform()
-      uploaded_file_or_original { |file| send("process_with_#{backend}", file) }
+    def perform
+      uploaded_file_or_original { |file| send("process_with_#{@backend}", file) }
     end
 
     private
@@ -39,6 +40,7 @@ module Croppable
 
     def process_with_vips(file)
       img = Vips::Image.new_from_file(file.path)
+      @data ||= update_data_via_headless_fit(img)
 
       x, y = *offsets(width: img.width, height: img.height)
 
@@ -57,6 +59,7 @@ module Croppable
 
     def process_with_mini_magick(file)
       img = MiniMagick::Image.open(file.path)
+      @data ||= update_data_via_headless_fit(img)
 
       x, y = *offsets(width: img.width, height: img.height)
       x = x.negative? ? "+#{x}" : "-#{x}"
@@ -97,6 +100,27 @@ module Croppable
         .remove("#")
         .scan(/\w{2}/)
         .map {|color| color.to_i(16) }
+    end
+
+    def update_data_via_headless_fit(img)
+      scales = [@setup[:width].to_f / img.width, @setup[:height].to_f / img.height]
+      scale =
+        case @headless_fit
+        when :cover then scales.max
+        when :contain then scales.min
+        else
+          raise "Unknown fit value: #{@headless_fit}"
+        end
+
+      data_attr = "#{@attr_name}_croppable_data"
+      @model.send("build_#{data_attr}") unless @model.send(data_attr)
+      @model.send(data_attr).update(
+        scale: scale,
+        x: (@setup[:width] - img.width).to_f / 2,
+        y: (@setup[:height] - img.height).to_f / 2,
+        background_color: @headless_bg
+      )
+      @model.send(data_attr)
     end
   end
 end

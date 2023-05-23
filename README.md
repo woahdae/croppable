@@ -78,6 +78,34 @@ model.logo_original
 
 NOTE: Images are cropped in a background job after model gets saved so they might not be immediately available
 
+### Headless
+
+This gem is built around cropperjs, but in case you need to add images without
+the frontend (ex. a bulk import), omitting the crop data will by default do a
+"contain" crop and add padding (default white) to the height or width of the
+image. A "cover" crop can also be specified, which will crop the height or
+width of the image to fill the image dimensions without padding.
+
+Defaults can be changed:
+
+```ruby
+Croppable.config.headless_fit = :cover # default :contain
+Croppable.config.headless_bg = '#000000' # default #ffffff
+```
+
+This can be configured on a per-image basis as well:
+
+```ruby
+has_croppable :logo, width: 200, height: 200, headless: { fit: :contain, bg: '#000000' }
+has_croppable :hero_image, width: 1000, height: 600, headless: { fit: :cover }
+```
+
+Then you can set an image the same way you set an ActiveStorage image:
+
+```ruby
+product.logo = { io: File.open('path/to/myimage.jpg'), filename: 'myimage.jpg' }
+```
+
 ## Contributing
 
 Run all test
