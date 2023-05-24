@@ -40,6 +40,14 @@ module Croppable
       end
     end
 
+    test "cropping maintains the filename" do
+      @product = Product.create(name: :moon, logo: @logo)
+      Croppable::Crop.new(@product, :logo).perform
+      @product.reload
+
+      assert_equal 'moon', @product.logo.blob.filename.to_s
+    end
+
     test "using :contain headless fit, can crop without JS crop data" do
       logo = { image: @image, data: nil }
       @product = Product.create(name: :moon, logo: logo)

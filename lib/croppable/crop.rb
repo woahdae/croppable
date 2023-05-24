@@ -17,7 +17,7 @@ module Croppable
     end
 
     def perform
-      uploaded_file_or_original { |file| send("process_with_#{@backend}", file) }
+      uploaded_file_or_original { |file, filename| send("process_with_#{@backend}", file, filename) }
     end
 
     private
@@ -32,13 +32,15 @@ module Croppable
     # look for the tempfile, and if not found use the stored file.
     def uploaded_file_or_original(&block)
       if (path = @uploaded_file[:path]) && File.exists?(path)
-        block.call(File.open(path))
+        block.call(File.open(path), @uploaded_file[:original_filename])
       else
-        @model.send("#{@attr_name}_original").open(&block)
+        @model.send("#{@attr_name}_original").open do |file|
+          block.call(file, @model.send("#{@attr_name}_original").blob&.filename.to_s)
+        end
       end
     end
 
-    def process_with_vips(file)
+    def process_with_vips(file, filename)
       img = Vips::Image.new_from_file(file.path)
       @data ||= update_data_via_headless_fit(img)
 
@@ -54,10 +56,10 @@ module Croppable
 
       img.write_to_file(path, background: background_rgb, Q: Croppable.config.image_quality)
 
-      @model.send("#{ @attr_name }_cropped").attach(io: File.open(path), filename: "cropped")
+      @model.send("#{ @attr_name }_cropped").attach(io: File.open(path), filename: filename)
     end
 
-    def process_with_mini_magick(file)
+    def process_with_mini_magick(file, filename)
       img = MiniMagick::Image.open(file.path)
       @data ||= update_data_via_headless_fit(img)
 
@@ -72,7 +74,7 @@ module Croppable
         opts.extent("#{new_width}x#{new_height}#{x}#{y}")
       end
 
-      @model.send("#{ @attr_name }_cropped").attach(io: File.open(img.path), filename: "cropped")
+      @model.send("#{ @attr_name }_cropped").attach(io: File.open(img.path), filename: filename)
     end
 
     def offsets(width:, height:)
