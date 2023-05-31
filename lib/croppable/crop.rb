@@ -17,7 +17,7 @@ module Croppable
     end
 
     def perform
-      uploaded_file_or_original { |file, filename| send("process_with_#{@backend}", file, filename) }
+      uploaded_file_or_original { |file| send("process_with_#{@backend}", file) }
     end
 
     private
@@ -31,16 +31,25 @@ module Croppable
     # tempfile has been cleaned up and we only have the stored file. So, we
     # look for the tempfile, and if not found use the stored file.
     def uploaded_file_or_original(&block)
-      if (path = @uploaded_file[:path]) && File.exists?(path)
-        block.call(File.open(path), @uploaded_file[:original_filename])
-      else
-        @model.send("#{@attr_name}_original").open do |file|
-          block.call(file, @model.send("#{@attr_name}_original").blob&.filename.to_s)
+      cropped_path =
+        if (path = @uploaded_file[:path]) && File.exists?(path)
+          filename = @uploaded_file[:original_filename]
+          block.call(File.open(path))
         end
-      end
+
+      cropped_path ||=
+        @model.send("#{@attr_name}_original").open do |file|
+          filename = @model.send("#{@attr_name}_original").blob&.filename.to_s
+          block.call(file)
+        end
+
+      @model.send("#{ @attr_name }_cropped").attach(
+        io: File.open(cropped_path),
+        filename: filename
+      )
     end
 
-    def process_with_vips(file, filename)
+    def process_with_vips(file)
       img = Vips::Image.new_from_file(file.path)
       @data ||= update_data_via_headless_fit(img)
 
@@ -54,12 +63,24 @@ module Croppable
 
       path = Tempfile.new('cropped').path + ".jpg"
 
-      img.write_to_file(path, background: background_rgb, Q: Croppable.config.image_quality)
+      # there is a race condition when processing the user-uploaded file,
+      # i.e. when not using the stored original, the uploaded file will finish
+      # being stored, and deleted, just as we are about to process it.
+      # See #uploaded_file_or_original for how this is handled.
+      begin
+        img.write_to_file(
+          path,
+          background: background_rgb,
+          Q: Croppable.config.image_quality
+        )
+      rescue Vips::Error
+        e.message.match?(/No such file or directory/) ? return : raise
+      end
 
-      @model.send("#{ @attr_name }_cropped").attach(io: File.open(path), filename: filename)
+      path
     end
 
-    def process_with_mini_magick(file, filename)
+    def process_with_mini_magick(file)
       img = MiniMagick::Image.open(file.path)
       @data ||= update_data_via_headless_fit(img)
 
@@ -74,7 +95,7 @@ module Croppable
         opts.extent("#{new_width}x#{new_height}#{x}#{y}")
       end
 
-      @model.send("#{ @attr_name }_cropped").attach(io: File.open(img.path), filename: filename)
+      img.path
     end
 
     def offsets(width:, height:)
