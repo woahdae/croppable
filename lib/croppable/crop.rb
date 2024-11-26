@@ -32,7 +32,7 @@ module Croppable
     # look for the tempfile, and if not found use the stored file.
     def uploaded_file_or_original(&block)
       cropped_path =
-        if (path = @uploaded_file[:path]) && File.exists?(path)
+        if (path = @uploaded_file[:path]) && File.exist?(path)
           filename = @uploaded_file[:original_filename]
           block.call(File.open(path))
         end
