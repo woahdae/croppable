@@ -8,7 +8,7 @@
     <%= croppable.check_box :delete, class: "croppable-input-delete", disabled: disabled %>
     <div class="croppable-preview">
       <div class="croppable-container">
-        <% if original.present? %>
+        <% if original.present? && original.persisted? %>
           <%= image_tag original, width: width, height: height, class: "croppable-image" %>
         <% end %>
       </div>
